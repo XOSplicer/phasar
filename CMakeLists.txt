@@ -441,8 +441,8 @@ if (PHASAR_ENABLE_WARNINGS)
 endif (PHASAR_ENABLE_WARNINGS)
 
 # Some preprocessor symbols that need to be available in phasar sources, but should not be installed
-add_cxx_compile_definitions(PHASAR_SRC_DIR="${CMAKE_SOURCE_DIR}")
-add_cxx_compile_definitions(PHASAR_BUILD_DIR="${CMAKE_BINARY_DIR}")
+add_cxx_compile_definitions(PHASAR_SRC_DIR="${PHASAR_SRC_DIR}")
+add_cxx_compile_definitions(PHASAR_BUILD_DIR="${PHASAR_BINARY_DIR}")
 
 # Add PhASAR's subdirectories
 add_subdirectory(lib)
