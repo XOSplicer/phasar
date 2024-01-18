@@ -147,6 +147,7 @@ private:
 
   void loadGlibcSpecialFunctionNames();
   void loadLLVMSpecialFunctionNames();
+  void loadRustSpecialFunctionNames();
 
   std::set<std::string> SpecialFuncNames;
 
@@ -157,6 +158,11 @@ private:
   /// Name of the file storing all LLVM intrinsic function names.
   static constexpr llvm::StringLiteral LLVMIntrinsicFunctionListFileName =
       "llvm_intrinsics_function_list_v1-04.05.17.conf";
+
+  /// Name of the file storing all LLVM intrinsic function names.
+  static constexpr llvm::StringLiteral RustIntrinsicFunctionListFileName =
+      "rust_intrinsics_function_list_v1-18.01.23.conf";
+
 
   /// Log file directory
   static constexpr llvm::StringLiteral LogFileDirectory = "log/";

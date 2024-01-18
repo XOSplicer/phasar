@@ -11,3 +11,8 @@ instruction); the code generator is responsible to replace the intrinsic
 functions with software or hardware implementation for the desired target
 architecture. Phasar models calls to these functions as identity (default) by a
 user can specify a different behavior if desired.
+
+The file rust_intrinsics_function_list_v1-18.01.23.conf
+contains a list of rust intrinsic functions that should similarily
+not be considered in analyses.
+These calls are also modeled as identity flow functions.

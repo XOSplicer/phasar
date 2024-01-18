@@ -58,6 +58,7 @@ llvm::StringRef PhasarConfig::DefaultSourceSinkFunctionsPath() noexcept {
 PhasarConfig::PhasarConfig() {
   loadGlibcSpecialFunctionNames();
   loadLLVMSpecialFunctionNames();
+  loadRustSpecialFunctionNames();
 
   // Insert allocation operators
   SpecialFuncNames.insert({"_Znwm", "_Znam", "_ZdlPv", "_ZdaPv"});
@@ -153,6 +154,19 @@ void PhasarConfig::loadLLVMSpecialFunctionNames() {
                           SpecialFuncNames)) {
     // Add default LLVM function names
     SpecialFuncNames.insert({"llvm.va_start"});
+  }
+}
+
+void PhasarConfig::loadRustSpecialFunctionNames() {
+  if (!loadConfigFileInto(RustIntrinsicFunctionListFileName,
+                          SpecialFuncNames)) {
+    // Add default Rust function names
+    SpecialFuncNames.insert({
+      "__rust_alloc",
+      "__rust_alloc_zeroed",
+      "__rust_dealloc",
+      "rust_eh_personality",
+    });
   }
 }
 
