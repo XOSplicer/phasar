@@ -432,17 +432,41 @@ public:
   getCallToRetEdgeFunction(n_t CallSite, d_t CallNode, n_t /*RetSite*/,
                            d_t RetSiteNode,
                            llvm::ArrayRef<f_t> Callees) override {
-    const auto *CS = llvm::cast<llvm::CallBase>(CallSite);
+    const llvm::CallBase *CS = llvm::cast<llvm::CallBase>(CallSite);
     for (const auto *Callee : Callees) {
       std::string DemangledFname = llvm::demangle(Callee->getName().str());
 
       // For now we assume that we can only generate from the return value.
       // We apply the same edge function for the return value, i.e. callsite.
+
+      // This assumption is incorrect in the presence of sret(ty)
+      // arguments
+      // We let the getFactoryParamIdx function determine if a param
+      // should be considered
+
       if (TSD->isFactoryFunction(DemangledFname)) {
         PHASAR_LOG_LEVEL(DEBUG, "Processing factory function");
+        // Handle case for return value
         if (isZeroValue(CallNode) && RetSiteNode == CS) {
           return TSConstant{
               TSD->getNextState(DemangledFname, TSD->uninit(), CS), TSD};
+        }
+        // Handle cases for other params as inidicated by the TSD
+        for (auto Idx : TSD->getFactoryParamIdx(DemangledFname)) {
+          if (Idx < 0) {
+            continue;
+          } // return value might be modeled as -1
+          const auto &AliasAndAllocas =
+              getWMAliasesAndAllocas(CS->getArgOperand(Idx));
+
+          // TODO: is the condition an the TSEdgeFunction correct?
+          // how to properly handle it?
+          if (CallNode == RetSiteNode && AliasAndAllocas.count(CallNode)) {
+            // if (isZeroValue(CallNode) && RetSiteNode == CS)
+            // return TSEdgeFunction{TSD, DemangledFname, CS};
+            return TSConstant{
+                TSD->getNextState(DemangledFname, TSD->uninit(), CS), TSD};
+          }
         }
       }
 
